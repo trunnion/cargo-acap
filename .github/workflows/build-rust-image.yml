@@ -30,7 +30,7 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v1.1.1
         with:
-          path: docker/
+          path: cargo-acap-build/
           tags: "${{ github.event.inputs.rustVersion }}"
           build_args: "RUST_VERSION=${{ github.event.inputs.rustVersion }}"
           always_pull: true

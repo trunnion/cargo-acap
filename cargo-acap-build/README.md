@@ -14,7 +14,7 @@ C/C++ cross-compilers supporting `--target=`:
 
 ## Tags
 
-This image is built from tagged releases of the Rust compiler, e.g. `willglynn/cargo-acap-build:1.46.0`.
+This image is built from tagged releases of the Rust compiler, e.g. `trunnion/cargo-acap-build:1.46.0`.
 
 ## Details
 
