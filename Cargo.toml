@@ -1,0 +1,30 @@
+[package]
+name = "cargo-acap"
+version = "0.1.0"
+authors = ["Will Glynn <will@willglynn.com>"]
+edition = "2018"
+description = "A tool to build Rust programs for the AXIS Camera Application Platform."
+repository = "https://github.com/trunnion/cargo-acap/"
+license = "MIT OR Apache-2.0"
+keywords = ["axis", "acap"]
+
+# Cargo.toml reference: https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cargo = "0.47"
+toml = "0.5"
+serde = { version = "1.0", features = ["derive"] }
+semver = { version = "0.10", features = ["serde"] }
+clap = { version = "3.0.0-beta.2", features = ["derive","suggestions"] }
+tar = "0.4"
+deflate = { version = "0.8", features = ["gzip"] }
+
+http = "0.2"
+hyper = "0.13"
+async-std = "1.6"
+openssl = "0.10"
+rand = "0.7"
+url = "2.1"
+
+[target."cfg(not(windows))".dependencies]
+libc = "0.2"

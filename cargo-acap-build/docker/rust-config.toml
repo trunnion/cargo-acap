@@ -1,0 +1,80 @@
+[llvm]
+optimize = true
+ninja = true
+targets = "AArch64;ARM;Mips;X86"
+
+[build]
+build = "x86_64-unknown-linux-gnu"
+host = ["x86_64-unknown-linux-gnu"]
+
+target = [
+    "x86_64-unknown-linux-gnu",
+    "aarch64-unknown-linux-gnu",
+    "armv5te-unknown-linux-gnueabi",
+    "arm-unknown-linux-gnueabi",
+    "armv7-unknown-linux-gnueabi",
+    "armv7-unknown-linux-gnueabihf",
+    "mipsisa32r2el-axis-linux-gnu",
+]
+
+build-dir = "build"
+
+# Don't build documentation
+docs = false
+compiler-docs = false
+
+# Build rust, cargo, rustfmt, clippy, and friends
+extended = true
+
+[install]
+prefix = "/usr/local"
+sysconfdir = "etc"
+
+[rust]
+# Consider this a -dev build
+channel = "dev"
+
+[target.x86_64-unknown-linux-gnu]
+# This is our host platform, so the defaults are fine
+
+[target.aarch64-unknown-linux-gnu]
+cc  = "aarch64-linux-gnu-gcc"
+cxx = "aarch64-linux-gnu-g++"
+ar  = "aarch64-linux-gnu-ar"
+ranlib = "aarch64-linux-gnu-ranlib"
+linker = "aarch64-linux-gnu-gcc"
+
+[target.armv5te-unknown-linux-gnueabi]
+cc  = "arm-linux-gnueabi-gcc"
+cxx = "arm-linux-gnueabi-g++"
+ar  = "arm-linux-gnueabi-ar"
+ranlib = "arm-linux-gnueabi-ranlib"
+linker = "arm-linux-gnueabi-gcc"
+
+[target.arm-unknown-linux-gnueabi]
+cc  = "arm-linux-gnueabi-gcc"
+cxx = "arm-linux-gnueabi-g++"
+ar  = "arm-linux-gnueabi-ar"
+ranlib = "arm-linux-gnueabi-ranlib"
+linker = "arm-linux-gnueabi-gcc"
+
+[target.armv7-unknown-linux-gnueabi]
+cc  = "arm-linux-gnueabi-gcc"
+cxx = "arm-linux-gnueabi-g++"
+ar  = "arm-linux-gnueabi-ar"
+ranlib = "arm-linux-gnueabi-ranlib"
+linker = "arm-linux-gnueabi-gcc"
+
+[target.armv7-unknown-linux-gnueabihf]
+cc  = "arm-linux-gnueabihf-gcc"
+cxx = "arm-linux-gnueabihf-g++"
+ar  = "arm-linux-gnueabihf-ar"
+ranlib = "arm-linux-gnueabihf-ranlib"
+linker = "arm-linux-gnueabihf-gcc"
+
+[target.mipsisa32r2el-axis-linux-gnu]
+cc  = "/usr/local/mipsisa32r2el/r23/bin/mipsisa32r2el-axis-linux-gnu-gcc"
+cxx = "/usr/local/mipsisa32r2el/r23/bin/mipsisa32r2el-axis-linux-gnu-g++"
+ar  = "/usr/local/mipsisa32r2el/r23/bin/mipsisa32r2el-axis-linux-gnu-ar"
+ranlib = "/usr/local/mipsisa32r2el/r23/bin/mipsisa32r2el-axis-linux-gnu-ranlib"
+linker = "/usr/local/mipsisa32r2el/r23/bin/mipsisa32r2el-axis-linux-gnu-gcc"
