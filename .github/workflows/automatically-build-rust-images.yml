@@ -1,0 +1,16 @@
+name: Automatically build Rust images
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "47 3,15 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Trigger build(s)
+        run: ./.github/workflows/automatically-build-rust-images.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
