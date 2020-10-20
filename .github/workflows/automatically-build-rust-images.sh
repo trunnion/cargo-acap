@@ -19,9 +19,10 @@ curl -s https://api.github.com/repos/rust-lang/rust/releases | \
     else
       echo "starting build for Rust ${RUST_TAG}"
       echo "$RUST_TAG" | jq -R '{ref: "master", inputs: {rustVersion: .}}' | \
-        curl -v \
+        curl \
           -X POST \
           -H "Accept: application/vnd.github.v3+json" \
+          -H "Content-Type: application/json" \
           -H "Authorization: Bearer $GITHUB_TOKEN" \
           https://api.github.com/repos/trunnion/cargo-acap/actions/workflows/build-rust-image.yml/dispatches \
           -d @-
