@@ -29,7 +29,7 @@ pub struct GlobalOptions {
     manifest_path: PathBuf,
 
     /// `docker` image to use for cross-compiling
-    #[clap(long, default_value = "trunnion/cargo-acap-build")]
+    #[clap(long, default_value = "trunnion/cargo-acap")]
     docker_image: String,
 }
 
@@ -42,6 +42,7 @@ enum Subcommand {
 #[derive(Debug)]
 pub struct Invocation {
     global_options: GlobalOptions,
+    rustc: cargo::util::Rustc,
     cargo_home: PathBuf,
     workspace_root: PathBuf,
     workspace_target: PathBuf,
@@ -72,7 +73,7 @@ fn cargo_acap_args() -> impl Iterator<Item = OsString> {
 impl Invocation {
     pub fn main() -> ! {
         let Args {
-            global_options,
+            mut global_options,
             subcommand,
             ..
         } = Args::parse_from(cargo_acap_args());
@@ -103,8 +104,21 @@ impl Invocation {
             .expect("error getting current `cargo` package")
             .clone();
 
+        let rustc = cargo_config
+            .load_global_rustc(Some(&cargo_workspace))
+            .expect("error loading rustc");
+
+        if global_options.docker_image.contains(':') {
+            // use the provided tag
+        } else {
+            // use rustc's version as the tag
+            let image_with_tag = format!("{}:{}", &global_options.docker_image, &rustc.version);
+            global_options.docker_image = image_with_tag;
+        };
+
         let invocation = Invocation {
             global_options,
+            rustc,
             cargo_home,
             workspace_root,
             workspace_target,
