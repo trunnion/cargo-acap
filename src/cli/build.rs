@@ -62,6 +62,7 @@ impl Build {
     }
 }
 
+#[derive(Debug)]
 struct BuildOp<'a> {
     invocation: &'a Invocation,
     package_conf: &'a PackageDotConf,

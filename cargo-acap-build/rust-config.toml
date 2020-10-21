@@ -9,12 +9,12 @@ host = ["x86_64-unknown-linux-gnu"]
 
 target = [
     "x86_64-unknown-linux-gnu",
-    "aarch64-unknown-linux-gnu",
-    "armv5te-unknown-linux-gnueabi",
-    "arm-unknown-linux-gnueabi",
-    "armv7-unknown-linux-gnueabi",
-    "armv7-unknown-linux-gnueabihf",
-    "mipsisa32r2el-axis-linux-gnu",
+    "aarch64-axis-linux-gnu",
+    "armv5te-axis-linux-gnueabi",
+    "arm-axis-linux-gnueabi",
+    "armv7-axis-linux-gnueabi",
+    "armv7-axis-linux-gnueabihf",
+    "mipsel-axis-linux-gnu",
 ]
 
 build-dir = "build"
@@ -37,42 +37,42 @@ channel = "dev"
 [target.x86_64-unknown-linux-gnu]
 # This is our host platform, so the defaults are fine
 
-[target.aarch64-unknown-linux-gnu]
+[target.aarch64-axis-linux-gnu]
 cc  = "aarch64-linux-gnu-gcc"
 cxx = "aarch64-linux-gnu-g++"
 ar  = "aarch64-linux-gnu-ar"
 ranlib = "aarch64-linux-gnu-ranlib"
 linker = "aarch64-linux-gnu-gcc"
 
-[target.armv5te-unknown-linux-gnueabi]
+[target.armv5te-axis-linux-gnueabi]
 cc  = "arm-linux-gnueabi-gcc"
 cxx = "arm-linux-gnueabi-g++"
 ar  = "arm-linux-gnueabi-ar"
 ranlib = "arm-linux-gnueabi-ranlib"
 linker = "arm-linux-gnueabi-gcc"
 
-[target.arm-unknown-linux-gnueabi]
+[target.arm-axis-linux-gnueabi]
 cc  = "arm-linux-gnueabi-gcc"
 cxx = "arm-linux-gnueabi-g++"
 ar  = "arm-linux-gnueabi-ar"
 ranlib = "arm-linux-gnueabi-ranlib"
 linker = "arm-linux-gnueabi-gcc"
 
-[target.armv7-unknown-linux-gnueabi]
+[target.armv7-axis-linux-gnueabi]
 cc  = "arm-linux-gnueabi-gcc"
 cxx = "arm-linux-gnueabi-g++"
 ar  = "arm-linux-gnueabi-ar"
 ranlib = "arm-linux-gnueabi-ranlib"
 linker = "arm-linux-gnueabi-gcc"
 
-[target.armv7-unknown-linux-gnueabihf]
+[target.armv7-axis-linux-gnueabihf]
 cc  = "arm-linux-gnueabihf-gcc"
 cxx = "arm-linux-gnueabihf-g++"
 ar  = "arm-linux-gnueabihf-ar"
 ranlib = "arm-linux-gnueabihf-ranlib"
 linker = "arm-linux-gnueabihf-gcc"
 
-[target.mipsisa32r2el-axis-linux-gnu]
+[target.mipsel-axis-linux-gnu]
 cc  = "/usr/local/mipsisa32r2el/r23/bin/mipsisa32r2el-axis-linux-gnu-gcc"
 cxx = "/usr/local/mipsisa32r2el/r23/bin/mipsisa32r2el-axis-linux-gnu-g++"
 ar  = "/usr/local/mipsisa32r2el/r23/bin/mipsisa32r2el-axis-linux-gnu-ar"

@@ -12,14 +12,14 @@ $ cargo new --bin your-app
      Created binary (application) `your-app` package
 $ cd your-app/
 $ cargo acap build
-cargo-acap: building ACAP package `your-app` using Docker image willglynn/cargo-acap-build
+cargo-acap: building ACAP package `your-app` using Docker image trunnion/cargo-acap-build:1.47.0
 …
     Finished release [optimized] target(s) in 0.56s
 $ ls target/acap/*.* | cat
  target/acap/your-app_0.1.0_aarch64.eap
  target/acap/your-app_0.1.0_aarch64.elf
- target/acap/your-app_0.1.0_armv5.eap
- target/acap/your-app_0.1.0_armv5.elf
+ target/acap/your-app_0.1.0_armv5tej.eap
+ target/acap/your-app_0.1.0_armv5tej.elf
  target/acap/your-app_0.1.0_armv6.eap
  target/acap/your-app_0.1.0_armv6.elf
  target/acap/your-app_0.1.0_armv7.eap
@@ -30,8 +30,8 @@ $ ls target/acap/*.* | cat
  target/acap/your-app_0.1.0_mips.elf
 ```
 
-`cargo-acap` requires Docker. It builds your application using a Docker image specialized for compiling Rust for AXIS
-devices, and then packages the resulting executable file, package metadata, and any required assets into `.eap` files.
+`cargo-acap` builds your application using a Docker image specialized for compiling Rust for AXIS devices. It therefore
+requires [Docker](https://docs.docker.com/get-docker/) to be installed and running in order to build.
 
 ## Application organization
 
@@ -53,7 +53,7 @@ foo/
 ## Packaging
 
 `cargo acap` builds your application's executable and then packages it into an `.eap` application package. The package
-contains metadata which is set to sensible defaults, but can be overridden via `Cargo.toml`.
+contains metadata which is set to sensible defaults but can be overridden via `Cargo.toml`.
 
 ```toml
 [package.metadata.acap]
@@ -99,39 +99,39 @@ Different AXIS products use different [SoCs](https://en.wikipedia.org/wiki/Syste
 processors. `cargo acap` provides a Docker build environment containing everything needed to build software for various
 AXIS devices. These targets are described in `cargo acap targets table`:
 
-| `cargo acap` `target` | Rust `--target`                 |
-| --------------------- | ------------------------------- |
-| `aarch64`             | `aarch64-unknown-linux-gnu`     |
-| `armv5`               | `armv5te-unknown-linux-gnueabi` |
-| `armv6`               | `arm-unknown-linux-gnueabi`     |
-| `armv7`               | `armv7-unknown-linux-gnueabi`   |
-| `armv7hf`             | `armv7-unknown-linux-gnueabihf` |
-| `mips`                | `mipsisa32r2el-axis-linux-gnu`  |
+| `cargo acap` `target` | Rust `--target`              |
+| --------------------- | ---------------------------- |
+| `aarch64`             | `aarch64-axis-linux-gnu`     |
+| `armv5tej`            | `armv5te-axis-linux-gnueabi` |
+| `armv6`               | `arm-axis-linux-gnueabi`     |
+| `armv7`               | `armv7-axis-linux-gnueabi`   |
+| `armv7hf`             | `armv7-axis-linux-gnueabihf` |
+| `mips`                | `mipsel-axis-linux-gnu`      |
 
-(`cargo acap` is specialized for AXIS products, so it uses abbreviated target names on the left. The Rust target triples
-are presented here for completeness.)
+`cargo acap` is specialized for AXIS products, so it uses abbreviated target names on the left. The Rust target triples
+defined by the `cargo-acap-build` environment are presented here for completeness.
 
 These targets correspond to the system-on-chips listed in `cargo acap targets soc_table`:
 
-| SOC           | Year | `cargo acap` `target` | Rust `--target`                 |
-| ------------- | ---- | --------------------- | ------------------------------- |
-| Axis ARTPEC-1 | 1999 | (unsupported)         | (unsupported)                   |
-| Axis ARTPEC-2 | 2003 | (unsupported)         | (unsupported)                   |
-| Axis ARTPEC-3 | 2007 | (unsupported)         | (unsupported)                   |
-| Ambarella A5S | 2010 | `armv6`               | `arm-unknown-linux-gnueabi`     |
-| Axis ARTPEC-4 | 2011 | `mips`                | `mipsisa32r2el-axis-linux-gnu`  |
-| Ambarella S2  | 2012 | `armv7`               | `armv7-unknown-linux-gnueabi`   |
-| Ambarella S2E | 2012 | `armv7hf`             | `armv7-unknown-linux-gnueabihf` |
-| Ambarella S2L | 2012 | `armv7hf`             | `armv7-unknown-linux-gnueabihf` |
-| Axis ARTPEC-5 | 2013 | `mips`                | `mipsisa32r2el-axis-linux-gnu`  |
-| NXP i.MX 8 QP | 2013 | `aarch64`             | `aarch64-unknown-linux-gnu`     |
-| Ambarella S3L | 2014 | `armv7hf`             | `armv7-unknown-linux-gnueabihf` |
-| Ambarella S5  | 2016 | `aarch64`             | `aarch64-unknown-linux-gnu`     |
-| Ambarella S5L | 2016 | `aarch64`             | `aarch64-unknown-linux-gnu`     |
-| Hi3516C V300  | 2016 | `armv5`               | `armv5te-unknown-linux-gnueabi` |
-| Hi3719C V100  | 2016 | `armv7hf`             | `armv7-unknown-linux-gnueabihf` |
-| Axis ARTPEC-6 | 2017 | `armv7hf`             | `armv7-unknown-linux-gnueabihf` |
-| Axis ARTPEC-7 | 2019 | `armv7hf`             | `armv7-unknown-linux-gnueabihf` |
+| SOC           | Year | `cargo acap` `target` | Rust `--target`              |
+| ------------- | ---- | --------------------- | ---------------------------- |
+| Axis ARTPEC-1 | 1999 | (unsupported)         | (unsupported)                |
+| Axis ARTPEC-2 | 2003 | (unsupported)         | (unsupported)                |
+| Axis ARTPEC-3 | 2007 | (unsupported)         | (unsupported)                |
+| Ambarella A5S | 2010 | `armv6`               | `arm-axis-linux-gnueabi`     |
+| Axis ARTPEC-4 | 2011 | `mips`                | `mipsel-axis-linux-gnu`      |
+| Ambarella S2  | 2012 | `armv7`               | `armv7-axis-linux-gnueabi`   |
+| Ambarella S2E | 2012 | `armv7hf`             | `armv7-axis-linux-gnueabihf` |
+| Ambarella S2L | 2012 | `armv7hf`             | `armv7-axis-linux-gnueabihf` |
+| Axis ARTPEC-5 | 2013 | `mips`                | `mipsel-axis-linux-gnu`      |
+| NXP i.MX 8 QP | 2013 | `aarch64`             | `aarch64-axis-linux-gnu`     |
+| Ambarella S3L | 2014 | `armv7hf`             | `armv7-axis-linux-gnueabihf` |
+| Ambarella S5  | 2016 | `aarch64`             | `aarch64-axis-linux-gnu`     |
+| Ambarella S5L | 2016 | `aarch64`             | `aarch64-axis-linux-gnu`     |
+| Hi3516C V300  | 2016 | `armv5tej`            | `armv5te-axis-linux-gnueabi` |
+| Hi3719C V100  | 2016 | `armv7hf`             | `armv7-axis-linux-gnueabihf` |
+| Axis ARTPEC-6 | 2017 | `armv7hf`             | `armv7-axis-linux-gnueabihf` |
+| Axis ARTPEC-7 | 2019 | `armv7hf`             | `armv7-axis-linux-gnueabihf` |
 
 The [AXIS product interface guide](https://www.axis.com/en-us/developer-community/product-interface-guide) describes
 many hardware configurations in detail, though it is incomplete. Check your device's [`root.Properties.System.Soc` and

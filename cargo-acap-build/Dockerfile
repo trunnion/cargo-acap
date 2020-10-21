@@ -39,10 +39,9 @@ RUN git clone --depth=1 --branch ${RUST_VERSION:-master} --recurse-submodules --
 WORKDIR /rust
 ADD rust-config.toml /rust/config.toml
 
-# Define the mipsisa32r2el-axis-linux-gnu target
-# It's mipsel-unknown-linux-gnu, but +soft-float
-ADD add_target.sh /tmp
-RUN /tmp/add_target.sh
+# Define our custom targets
+ADD add_targets.sh /tmp
+RUN /tmp/add_targets.sh
 
 # Build and install to /usr/local
 # (This will take some time.)
@@ -72,23 +71,23 @@ COPY --from=rust /usr/local/ /usr/local/
 
 # Set up the environment
 ENV \
-  CC_aarch64_unknown_linux_gnu="aarch64-linux-gnu-gcc" \
-  CXX_aarch64_unknown_linux_gnu="aarch64-linux-gnu-g++" \
-  CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER="aarch64-linux-gnu-gcc" \
-  CC_armv5te_unknown_linux_gnueabi="arm-linux-gnueabi-gcc" \
-  CXX_armv5te_unknown_linux_gnueabi="arm-linux-gnueabi-g++" \
-  CARGO_TARGET_ARMV5TE_UNKNOWN_LINUX_GNUEABI_LINKER="arm-linux-gnueabi-gcc" \
-  CC_arm_unknown_linux_gnueabi="arm-linux-gnueabi-gcc" \
-  CXX_arm_unknown_linux_gnueabi="arm-linux-gnueabi-g++" \
-  CARGO_TARGET_ARM_UNKNOWN_LINUX_GNUEABI_LINKER="arm-linux-gnueabi-gcc" \
-  CC_armv7_unknown_linux_gnueabi="arm-linux-gnueabi-gcc" \
-  CXX_armv7_unknown_linux_gnueabi="arm-linux-gnueabi-g++" \
-  CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABI_LINKER="arm-linux-gnueabi-gcc" \
-  CC_armv7_unknown_linux_gnueabihf="arm-linux-gnueabihf-gcc" \
-  CXX_armv7_unknown_linux_gnueabihf="arm-linux-gnueabihf-g++" \
-  CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER="arm-linux-gnueabihf-gcc" \
-  CC_mipsisa32r2el_axis_linux_gnu="mipsisa32r2el-axis-linux-gnu-gcc" \
-  CXX_mipsisa32r2el_axis_linux_gnu="mipsisa32r2el-axis-linux-gnu-g++" \
-  CARGO_TARGET_MIPSISA32R2EL_AXIS_LINUX_GNU_LINKER="mipsisa32r2el-axis-linux-gnu-gcc" \
+  CC_aarch64_axis_linux_gnu="aarch64-linux-gnu-gcc" \
+  CXX_aarch64_axis_linux_gnu="aarch64-linux-gnu-g++" \
+  CARGO_TARGET_AARCH64_AXIS_LINUX_GNU_LINKER="aarch64-linux-gnu-gcc" \
+  CC_armv5te_axis_linux_gnueabi="arm-linux-gnueabi-gcc" \
+  CXX_armv5te_axis_linux_gnueabi="arm-linux-gnueabi-g++" \
+  CARGO_TARGET_ARMV5TE_AXIS_LINUX_GNUEABI_LINKER="arm-linux-gnueabi-gcc" \
+  CC_arm_axis_linux_gnueabi="arm-linux-gnueabi-gcc" \
+  CXX_arm_axis_linux_gnueabi="arm-linux-gnueabi-g++" \
+  CARGO_TARGET_ARM_AXIS_LINUX_GNUEABI_LINKER="arm-linux-gnueabi-gcc" \
+  CC_armv7_axis_linux_gnueabi="arm-linux-gnueabi-gcc" \
+  CXX_armv7_axis_linux_gnueabi="arm-linux-gnueabi-g++" \
+  CARGO_TARGET_ARMV7_AXIS_LINUX_GNUEABI_LINKER="arm-linux-gnueabi-gcc" \
+  CC_armv7_axis_linux_gnueabihf="arm-linux-gnueabihf-gcc" \
+  CXX_armv7_axis_linux_gnueabihf="arm-linux-gnueabihf-g++" \
+  CARGO_TARGET_ARMV7_AXIS_LINUX_GNUEABIHF_LINKER="arm-linux-gnueabihf-gcc" \
+  CC_mipsel_axis_linux_gnu="mipsisa32r2el-axis-linux-gnu-gcc" \
+  CXX_mipsel_axis_linux_gnu="mipsisa32r2el-axis-linux-gnu-g++" \
+  CARGO_TARGET_MIPSEL_AXIS_LINUX_GNU_LINKER="mipsisa32r2el-axis-linux-gnu-gcc" \
   PATH="/usr/local/sbin:/usr/local/bin:/usr/local/mipsisa32r2el/r23/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
   PKG_CONFIG_ALLOW_CROSS=1

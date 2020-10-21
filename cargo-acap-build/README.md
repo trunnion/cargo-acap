@@ -4,32 +4,41 @@ This folder contains a Docker image suitable for Rust development with the [AXIS
 Platform](https://www.axis.com/en-us/products/analytics/acap). The image contains a custom Rust build and associated
 C/C++ cross-compilers supporting `--target=`:
 
-* `x86_64-unknown-linux-gnu`
-* `aarch64-unknown-linux-gnu`
-* `armv5te-unknown-linux-gnueabi`
-* `arm-unknown-linux-gnueabi`
-* `armv7-unknown-linux-gnueabi`
-* `armv7-unknown-linux-gnueabihf`
-* `mipsisa32r2el-axis-linux-gnu`
+* `x86_64-unknown-linux-gnu` (for build scripts)
+* `aarch64-axis-linux-gnu`
+* `armv5te-axis-linux-gnueabi`
+* `arm-axis-linux-gnueabi`
+* `armv7-axis-linux-gnueabi`
+* `armv7-axis-linux-gnueabihf`
+* `mipsel-axis-linux-gnu`
 
 ## Tags
 
-This image is built from tagged releases of the Rust compiler, e.g. `trunnion/cargo-acap-build:1.46.0`.
+This image is built from tagged releases of the Rust compiler in the `rust-lang/rust` GitHub repository. The resulting
+Docker images are tagged to match, like `trunnion/cargo-acap-build:1.47.0`.
 
 ## Details
 
-### Project layout
+### Docker assets
 
-The `docker build` context is located in `docker/`. It contains a `Dockerfile`, a `config.toml` for the Rust build, and
-a script which adds the `mipsisa32r2el-axis-linux-gnu` target. Building this image requires a considerable amount of
-resources; see [the `rustc-dev` docs](https://rustc-dev-guide.rust-lang.org/building/prerequisites.html#hardware) for
-more specific guidance.
+This folder contains a `Dockerfile`, a `rust-config.toml` for the Rust build, and a script which adds the
+`mipsisa32r2el-axis-linux-gnu` target. Building this image requires a considerable amount of resources; see
+[the `rustc-dev` docs](https://rustc-dev-guide.rust-lang.org/building/prerequisites.html#hardware) for more specific
+guidance.
 
-`.github/workflows/` contains GitHub Actions definitions to build these images automatically.
+### GitHub Actions
+
+`.github/workflows/` contains two associated GitHub Actions definitions:
+
+* `build-rust-image.yml`: when invoked a `rustVersion` argument, it builds and pushes a `cargo-acap-build:<rustVersion>`
+  Docker image. 
+* `automatically-build-rust-images.yml`: when invoked manually or by the scheduler, it compares the list of Docker
+  images to the list of Rust releases and triggers `build-rust-image.yml` builds as needed.
 
 ### Custom MIPS target
 
-Axis ARTPEC-4 and ARTPEC-5 chips contain MIPS32r2 cores in a little-endian configuration. `/proc/cpuinfo`:
+Axis ARTPEC-4 and ARTPEC-5 chips contain MIPS32r2 cores, and the Axis firmware uses them in a little-endian
+configuration. `/proc/cpuinfo`:
 
 ```
 system type		: Axis Artpec-5
@@ -62,7 +71,19 @@ This processor corresponds to Rust targets `mipsel-*`, except that none of them 
    linked on MIPS due to interference with `libbacktrace-sys`
 * `mipsel-unknown-linux-uclibc` is again compatible but again requires an alternate libc `.so`
 
-`mipsisa32r2el-axis-linux-gnu` is a custom target specifically for `cargo-acap`, configured as
-`mipsel-unknown-linux-gnu` except with `+mips32r2,+soft-float` like `mipsel-unknown-linux-musl` and
-`mipsel-unknown-linux-uclibc`. Additionally, this target is built with the Axis-provided GNU toolchain, since there is
-no commonly-distributed C toolchain with exactly the right configuration.
+`mipsel-axis-linux-gnu` is a custom target specifically for `cargo-acap`, configured as `mipsel-unknown-linux-gnu`
+except with `+mips32r2,+soft-float` like `mipsel-unknown-linux-musl` and `mipsel-unknown-linux-uclibc`. Additionally,
+this target is built with the Axis-provided GNU toolchain, since there is no commonly-distributed C toolchain with
+exactly the right configuration.
+
+### Custom other targets
+
+The other Axis targets:
+
+* `aarch64-axis-linux-gnu`
+* `armv5te-axis-linux-gnueabi`
+* `arm-axis-linux-gnueabi`
+* `armv7-axis-linux-gnueabi`
+* `armv7-axis-linux-gnueabihf`
+
+…are 100% identical to their usual `*-unknown-linux-*` counterparts except for having `axis` in the name.

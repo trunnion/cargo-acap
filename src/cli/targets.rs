@@ -1,6 +1,7 @@
 use crate::cli::Invocation;
 use crate::target::{Target, SOC};
 use clap::Clap;
+use std::convert::TryFrom;
 
 /// List which targets
 #[derive(Clap)]
@@ -45,18 +46,19 @@ impl Targets {
             }
             Mode::SocTable => {
                 let mut socs: Vec<&SOC> = SOC::all().into_iter().collect();
-                socs.sort_by_key(|soc| (soc.year(), soc.name()));
+                socs.sort_by_key(|soc| (soc.year(), soc.display_name()));
 
                 print_table(
                     &["SOC", "Year", "`cargo acap` `target`", "Rust `--target`"],
                     socs.into_iter().map(|soc| {
+                        let target = Target::try_from(soc.architecture()).ok();
                         vec![
-                            soc.name().to_string(),
+                            soc.display_name().to_string(),
                             format!("{}", soc.year()),
-                            soc.target()
+                            target
                                 .map(|t| format!("`{}`", t.name()))
                                 .unwrap_or("(unsupported)".to_string()),
-                            soc.target()
+                            target
                                 .map(|t| format!("`{}`", t.rust_target_triple()))
                                 .unwrap_or("(unsupported)".to_string()),
                         ]

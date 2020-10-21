@@ -1,6 +1,7 @@
 use crate::package_dot_conf::PackageDotConf;
 use crate::whoami::whoami;
 use clap::Clap;
+use std::ffi::OsString;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
@@ -17,7 +18,7 @@ struct Args {
     subcommand: Subcommand,
 }
 
-#[derive(Clap)]
+#[derive(Debug, Clap)]
 pub struct GlobalOptions {
     /// A level of verbosity, and can be used multiple times
     #[clap(short, long, parse(from_occurrences))]
@@ -38,6 +39,7 @@ enum Subcommand {
     Targets(targets::Targets),
 }
 
+#[derive(Debug)]
 pub struct Invocation {
     global_options: GlobalOptions,
     cargo_home: PathBuf,
@@ -47,12 +49,33 @@ pub struct Invocation {
     acap_target: Mutex<Option<PathBuf>>,
 }
 
+/// Process arguments, where `cargo acap …` is treated as `cargo-acap …`
+fn cargo_acap_args() -> impl Iterator<Item = OsString> {
+    let mut args: Vec<OsString> = std::env::args_os().collect();
+
+    match (args.get(0), args.get(1)) {
+        (Some(cargo), Some(acap))
+            if cargo.to_string_lossy().contains("cargo") && acap == "acap" =>
+        {
+            // We were invoked as `cargo acap` or similar
+            // Pretend we were invoked as `cargo-acap` -- dropping `acap` -- so that clap matching
+            // works as expected
+            args.remove(0);
+            args[0] = OsString::from(String::from("cargo-acap"));
+        }
+        _ => {}
+    }
+
+    args.into_iter()
+}
+
 impl Invocation {
     pub fn main() -> ! {
         let Args {
             global_options,
             subcommand,
-        } = Args::parse();
+            ..
+        } = Args::parse_from(cargo_acap_args());
 
         let cargo_config = cargo::Config::default().expect("error constructing `cargo` config");
         let cargo_home = cargo_config.home().as_path_unlocked().to_owned();
@@ -154,7 +177,7 @@ impl Invocation {
                 self.workspace_root.display()
             ),
             "--workdir",
-            &self.workspace_root.display().to_string(),
+            &self.cargo_package.root().display().to_string(),
         ]);
 
         // Mount target_path at /target and tell `cargo` to use it
