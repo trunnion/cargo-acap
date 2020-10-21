@@ -50,6 +50,41 @@ foo/
             foo_0.1.0_mips.elf      The executable inside foo_0.1.0_mips.eap prior to stripping symbols
 ```
 
+## Conditional compilation
+
+`cargo acap` builds your application with `target_vendor = "axis"`, enabling one source tree to support both on- and
+off-device usage via [conditional compilation](https://doc.rust-lang.org/reference/conditional-compilation.html).
+
+```rust
+#[cfg(target_vendor = "axis")]
+fn foo() {
+    // call on-device APIs
+}
+
+#[cfg(not(target_vendor = "axis"))]
+fn foo() {
+    // call off-device APIs
+}
+
+fn bar() {
+    if cfg!(target_vendor = "axis") {
+        // on-device
+    } else {
+        // off-device
+    }
+}
+
+#[cfg_attr(target_vendor = "axis", path = "baz_on_device.rs")]
+#[cfg_attr(not(target_vendor = "axis"), path = "baz_off_device.rs")]
+mod baz;
+
+#[test]
+#[cfg_attr(not(target_vendor = "axis"), ignore)]
+fn quxx() {
+    // this test will run everywhere, but will be ignored if not on-device
+}
+```
+
 ## Packaging
 
 `cargo acap` builds your application's executable and then packages it into an `.eap` application package. The package
