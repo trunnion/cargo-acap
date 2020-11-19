@@ -3,7 +3,7 @@
 # The rustc_target/spec directory has moved
 # Find it in the current checkout
 target_specs=
-for dir in src/librustc_target/spec compiler/rustc_target/spec
+for dir in src/librustc_target/spec compiler/rustc_target/spec compiler/rustc_target/src/spec
 do
   [ -d "$dir" ] && target_specs="$dir"
 done
