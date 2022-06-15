@@ -1,11 +1,12 @@
-use clap::Clap;
+use clap::Parser;
 use serde::de::{Deserialize, Deserializer};
 use std::convert::TryFrom;
 use std::str::FromStr;
+use std::error::Error;
 
 pub use vapix::v3::application::{Architecture, SOC};
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Clap)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Parser)]
 pub enum Target {
     Aarch64,
     Armv5tej,
@@ -120,6 +121,8 @@ impl<'de> Deserialize<'de> for Target {
 
 #[derive(Debug, Clone)]
 pub struct NoSuchTargetError(String);
+
+impl Error for NoSuchTargetError {}
 
 impl std::fmt::Display for NoSuchTargetError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {

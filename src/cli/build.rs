@@ -1,13 +1,13 @@
 use crate::cli::Invocation;
 use crate::package_dot_conf::PackageDotConf;
 use crate::target::Target;
-use clap::Clap;
+use clap::Parser;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
 /// Build an ACAP application
-#[derive(Clap)]
+#[derive(Parser)]
 pub struct Build {
     /// Which target(s) to build (defaults to all)
     #[clap(short, long, alias = "target")]

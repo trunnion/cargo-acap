@@ -1,6 +1,6 @@
 use crate::package_dot_conf::PackageDotConf;
 use crate::whoami::whoami;
-use clap::Clap;
+use clap::Parser;
 use std::ffi::OsString;
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -8,7 +8,7 @@ use std::sync::Mutex;
 mod build;
 mod targets;
 
-#[derive(Clap)]
+#[derive(Parser)]
 #[clap(author, about)]
 struct Args {
     #[clap(flatten)]
@@ -18,7 +18,7 @@ struct Args {
     subcommand: Subcommand,
 }
 
-#[derive(Debug, Clap)]
+#[derive(Debug, Parser)]
 pub struct GlobalOptions {
     /// A level of verbosity, and can be used multiple times
     #[clap(short, long, parse(from_occurrences))]
@@ -33,7 +33,7 @@ pub struct GlobalOptions {
     docker_image: String,
 }
 
-#[derive(Clap)]
+#[derive(Parser)]
 enum Subcommand {
     Build(build::Build),
     Targets(targets::Targets),
