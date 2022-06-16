@@ -1,9 +1,9 @@
 use clap::Parser;
-use serde::{Serialize, Deserialize};
 use serde::de::Deserializer;
+use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
-use std::str::FromStr;
 use std::error::Error;
+use std::str::FromStr;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Parser)]
 pub enum Target {
@@ -60,7 +60,6 @@ impl Target {
         }
     }
 }
-
 
 /// A system architecture used by an AXIS product.
 ///
@@ -138,10 +137,10 @@ impl std::str::FromStr for Target {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Target::all()
-            .into_iter()
+            .iter()
             .find(|arch| arch.name() == s || arch.rust_target_triple() == s)
-            .map(|a| *a)
-            .ok_or(NoSuchTargetError(s.into()))
+            .copied()
+            .ok_or_else(|| NoSuchTargetError(s.into()))
     }
 }
 
@@ -164,7 +163,7 @@ impl std::fmt::Display for NoSuchTargetError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "no such target: {}\nexpected one of:\n", &self.0)?;
         for arch in Target::all() {
-            write!(f, "  * {}\n", arch.name())?;
+            write!(f, "  * {}", arch.name())?;
         }
         Ok(())
     }
@@ -243,13 +242,6 @@ impl SOC {
         }
     }
 
-    pub(crate) fn from_param(value: &str) -> Option<Self> {
-        Some(match value {
-            "Axis Artpec-5" => Self::Artpec5,
-            _ => return None,
-        })
-    }
-
     /// The year when this SoC was released.
     pub fn year(&self) -> u32 {
         match self {
@@ -276,9 +268,11 @@ impl SOC {
     /// practice, Axis has compiled every firmware released for every product using a given SoC with
     /// the same architecture. Still, if you specifically need to know which architecture a given
     /// device is using, you should ask instead of assuming.
-    pub fn architecture(&self) -> Target {
-        match self {
-            SOC::Artpec1 | SOC::Artpec2 | SOC::Artpec3 => panic!("ARTPEC 1, 2 and 3 use CrisV32, which is not supported"),
+    pub fn architecture(&self) -> Result<Target, &'static str> {
+        Ok(match self {
+            SOC::Artpec1 | SOC::Artpec2 | SOC::Artpec3 => {
+                return Err("ARTPEC 1, 2 and 3 use CrisV32, which is not supported")
+            }
             SOC::Artpec4 | SOC::Artpec5 => Target::Mips,
             SOC::Artpec6 | SOC::Artpec7 => Target::Armv7Hf,
             SOC::A5S => Target::Armv6,
@@ -289,7 +283,7 @@ impl SOC {
             SOC::S2E | SOC::S2L => Target::Armv7Hf,
             SOC::S3L => Target::Armv7Hf,
             SOC::S5 | SOC::S5L => Target::Aarch64,
-        }
+        })
     }
 }
 

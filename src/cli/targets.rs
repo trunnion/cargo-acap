@@ -1,7 +1,6 @@
 use crate::cli::Invocation;
 use crate::target::{Target, SOC};
 use clap::Parser;
-use std::convert::TryFrom;
 
 /// List which targets
 #[derive(Parser)]
@@ -36,7 +35,7 @@ impl Targets {
             Mode::Table => {
                 print_table(
                     &["`cargo acap` `target`", "Rust `--target`"],
-                    Target::all().into_iter().map(|t| {
+                    Target::all().iter().map(|t| {
                         vec![
                             format!("`{}`", t.name()),
                             format!("`{}`", t.rust_target_triple()),
@@ -45,22 +44,22 @@ impl Targets {
                 );
             }
             Mode::SocTable => {
-                let mut socs: Vec<&SOC> = SOC::all().into_iter().collect();
+                let mut socs: Vec<&SOC> = SOC::all().iter().collect();
                 socs.sort_by_key(|soc| (soc.year(), soc.display_name()));
 
                 print_table(
                     &["SOC", "Year", "`cargo acap` `target`", "Rust `--target`"],
                     socs.into_iter().map(|soc| {
-                        let target = Target::try_from(soc.architecture()).ok();
+                        let target = soc.architecture().ok();
                         vec![
                             soc.display_name().to_string(),
                             format!("{}", soc.year()),
                             target
                                 .map(|t| format!("`{}`", t.name()))
-                                .unwrap_or("(unsupported)".to_string()),
+                                .unwrap_or_else(|| "(unsupported)".to_string()),
                             target
                                 .map(|t| format!("`{}`", t.rust_target_triple()))
-                                .unwrap_or("(unsupported)".to_string()),
+                                .unwrap_or_else(|| "(unsupported)".to_string()),
                         ]
                     }),
                 );
@@ -101,9 +100,9 @@ where
     fn print_row<R: IntoIterator<Item = T>, T: AsRef<str>>(row: R, column_lengths: &[usize]) {
         let total_length: usize = column_lengths.iter().map(|l| *l + 2).sum();
         let mut output = String::with_capacity(total_length + 2 + 1);
-        output.push_str("|");
+        output.push('|');
 
-        for (len, cell) in column_lengths.into_iter().zip(row) {
+        for (len, cell) in column_lengths.iter().zip(row) {
             let cell: &str = cell.as_ref();
             output.push(' ');
             output.push_str(cell);

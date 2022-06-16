@@ -25,7 +25,7 @@ impl Build {
         let global_options = invocation.global_options();
         let project_source_path = invocation.package_source_path();
 
-        let targets = if self.targets.len() > 0 {
+        let targets = if !self.targets.is_empty() {
             self.targets.clone()
         } else {
             Target::all().to_vec()

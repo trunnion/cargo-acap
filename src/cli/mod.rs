@@ -42,7 +42,6 @@ enum Subcommand {
 #[derive(Debug)]
 pub struct Invocation {
     global_options: GlobalOptions,
-    rustc: cargo::util::Rustc,
     cargo_home: PathBuf,
     workspace_root: PathBuf,
     workspace_target: PathBuf,
@@ -118,7 +117,6 @@ impl Invocation {
 
         let invocation = Invocation {
             global_options,
-            rustc,
             cargo_home,
             workspace_root,
             workspace_target,
@@ -197,14 +195,14 @@ impl Invocation {
         // Mount target_path at /target and tell `cargo` to use it
         docker.args(&[
             "--volume",
-            &format!("{}:/target:Z", self.acap_target().display().to_string()),
+            &format!("{}:/target:Z", self.acap_target().display()),
         ]);
         docker.args(&["--env", "CARGO_TARGET_DIR=/target"]);
 
         // Mount the cargo home at /.cargo
         docker.args(&[
             "--volume",
-            &format!("{}:/.cargo:Z", self.cargo_home.display().to_string()),
+            &format!("{}:/.cargo:Z", self.cargo_home.display()),
         ]);
 
         if let Ok(value) = std::env::var("DOCKER_OPTS") {

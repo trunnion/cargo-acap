@@ -127,13 +127,11 @@ impl From<cargo::core::Package> for PackageDotConf {
         let acap_metadata = match acap_metadata_toml {
             Some(m) => {
                 let acap_metadata_str = m.to_string();
-                let acap_metadata : CargoAcapMetadata = toml::de::from_str(&acap_metadata_str)
-                            .expect("error parsing [package.metadata.acap] table");
+                let acap_metadata: CargoAcapMetadata = toml::de::from_str(&acap_metadata_str)
+                    .expect("error parsing [package.metadata.acap] table");
                 acap_metadata
-            },
-            None => {
-                CargoAcapMetadata::default()
             }
+            None => CargoAcapMetadata::default(),
         };
 
         let CargoAcapMetadata {
@@ -173,11 +171,11 @@ impl From<cargo::core::Package> for PackageDotConf {
         let app_major_version = version
             .major
             .try_into()
-            .unwrap_or_else(|_| panic!("version {:?} out of range"));
+            .unwrap_or_else(|_| panic!("version {:?} out of range", version));
         let app_minor_version = version
             .minor
             .try_into()
-            .unwrap_or_else(|_| panic!("version {:?} out of range"));
+            .unwrap_or_else(|_| panic!("version {:?} out of range", version));
 
         let app_micro_version = {
             let mut s = version.patch.to_string();
@@ -224,11 +222,11 @@ impl fmt::Display for PackageDotConf {
     }
 }
 
-fn serialize_other_files<S>(other_files: &Vec<String>, ser: S) -> Result<S::Ok, S::Error>
+fn serialize_other_files<S>(other_files: &[String], ser: S) -> Result<S::Ok, S::Error>
 where
     S: serde::Serializer,
 {
-    if let Some(bad) = other_files.iter().find(|f| f.contains(" ")) {
+    if let Some(bad) = other_files.iter().find(|f| f.contains(' ')) {
         panic!(
             "unable to serialize other_files=[{:?}] since it contains a space",
             bad
