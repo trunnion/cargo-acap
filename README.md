@@ -12,7 +12,7 @@ $ cargo new --bin your-app
      Created binary (application) `your-app` package
 $ cd your-app/
 $ cargo acap build
-cargo-acap: building ACAP package `your-app` using Docker image trunnion/cargo-acap-build:1.47.0
+cargo-acap: building ACAP package `your-app` using Docker image trunnion/cargo-acap-build:1.60.0
 …
     Finished release [optimized] target(s) in 0.56s
 $ ls target/acap/*.* | cat
