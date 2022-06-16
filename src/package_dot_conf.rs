@@ -100,16 +100,16 @@ pub(crate) struct PackageDotConf {
     pub start_mode: StartMode,
 }
 
-#[serde(rename_all = "snake_case")]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum LicensePage {
     Axis,
     Custom,
     None,
 }
 
-#[serde(rename_all = "snake_case")]
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum StartMode {
     Respawn,
     Once,
@@ -118,15 +118,23 @@ pub enum StartMode {
 
 impl From<cargo::core::Package> for PackageDotConf {
     fn from(package: cargo::core::Package) -> Self {
-        let acap_metadata = package
+        let acap_metadata_toml = package
             .manifest()
             .custom_metadata()
             .and_then(|v| v.as_table())
-            .and_then(|t| t.get("acap"))
-            .map(|v| {
-                CargoAcapMetadata::deserialize(v.clone())
-                    .expect("error parsing [package.metadata.acap] table")
-            });
+            .and_then(|t| t.get("acap"));
+
+        let acap_metadata = match acap_metadata_toml {
+            Some(m) => {
+                let acap_metadata_str = m.to_string();
+                let acap_metadata : CargoAcapMetadata = toml::de::from_str(&acap_metadata_str)
+                            .expect("error parsing [package.metadata.acap] table");
+                acap_metadata
+            },
+            None => {
+                CargoAcapMetadata::default()
+            }
+        };
 
         let CargoAcapMetadata {
             app_name,
@@ -139,7 +147,7 @@ impl From<cargo::core::Package> for PackageDotConf {
             license_check_arguments,
             start_mode,
             targets: _,
-        } = acap_metadata.unwrap_or(CargoAcapMetadata::default());
+        } = acap_metadata;
 
         let app_name = app_name.unwrap_or_else(|| package.name().to_string());
         let display_name = display_name.unwrap_or_else(|| package.name().to_string());
@@ -173,11 +181,11 @@ impl From<cargo::core::Package> for PackageDotConf {
 
         let app_micro_version = {
             let mut s = version.patch.to_string();
-            for pre in version.pre.iter() {
+            for pre in version.pre.as_str().chars() {
                 s += "-";
                 s += &pre.to_string();
             }
-            for build in version.build.iter() {
+            for build in version.build.as_str().chars() {
                 s += "+";
                 s += &build.to_string();
             }

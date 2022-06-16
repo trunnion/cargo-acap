@@ -1,17 +1,17 @@
 use crate::cli::Invocation;
 use crate::target::{Target, SOC};
-use clap::Clap;
+use clap::Parser;
 use std::convert::TryFrom;
 
 /// List which targets
-#[derive(Clap)]
+#[derive(Parser)]
 pub struct Targets {
     /// Which mode to list
     #[clap(arg_enum)]
     mode: Option<Mode>,
 }
 
-#[derive(Debug, Clap)]
+#[derive(Debug, Clone, Parser, clap::ValueEnum)]
 #[clap(rename_all = "snake_case")]
 pub enum Mode {
     /// A plain text list of all supported --target= values
