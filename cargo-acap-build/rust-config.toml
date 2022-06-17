@@ -19,6 +19,10 @@ target = [
 
 build-dir = "build"
 
+# Only build the compiler and `cargo`
+# `miri` in particular does not build for every target, but everything else is superfluous anyway
+tools = ["cargo"]
+
 # Don't build documentation
 docs = false
 compiler-docs = false
