@@ -1,5 +1,6 @@
 use crate::cargo_config::CargoAcapMetadata;
 use crate::shell_includes;
+use crate::target::Target;
 use serde::{Deserialize, Serialize};
 use std::convert::TryInto;
 use std::fmt;
@@ -20,6 +21,10 @@ pub(crate) struct PackageDotConf {
 
     #[serde(rename = "VENDOR")]
     pub vendor: String,
+
+    /// The CPU architecture the app is built for
+    #[serde(rename = "APPTYPE")]
+    pub app_type: String,
 
     #[serde(rename = "APPOPTS")]
     pub launch_arguments: Option<String>,
@@ -116,8 +121,8 @@ pub enum StartMode {
     Never,
 }
 
-impl From<cargo::core::Package> for PackageDotConf {
-    fn from(package: cargo::core::Package) -> Self {
+impl PackageDotConf {
+    pub fn from_cargo_package(package: &cargo::core::Package, target: Target) -> Self {
         let acap_metadata_toml = package
             .manifest()
             .custom_metadata()
@@ -195,6 +200,7 @@ impl From<cargo::core::Package> for PackageDotConf {
             display_name,
             menu_name,
             axis_application_id: axis_application_id.unwrap_or_default(),
+            app_type: target.name().to_string(),
             vendor,
             launch_arguments,
             app_major_version,

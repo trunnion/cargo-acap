@@ -1,4 +1,3 @@
-use crate::package_dot_conf::PackageDotConf;
 use crate::whoami::whoami;
 use clap::Parser;
 use std::ffi::OsString;
@@ -212,10 +211,6 @@ impl Invocation {
 
         docker.arg(&self.global_options.docker_image);
         docker
-    }
-
-    pub(crate) fn package_dot_conf(&self) -> PackageDotConf {
-        self.cargo_package.clone().into()
     }
 
     pub fn run_to_completion(&self, mut command: std::process::Command) {
