@@ -19,7 +19,6 @@ pub struct Build {
 
 impl Build {
     pub(crate) fn invoke(self, invocation: Invocation) {
-        let package_dot_conf = invocation.package_dot_conf();
         let acap_target = invocation.acap_target();
         let version = invocation.package_version();
         let global_options = invocation.global_options();
@@ -32,8 +31,8 @@ impl Build {
         };
 
         println!(
-            "cargo-acap: building ACAP package `{}` using Docker image {}",
-            &package_dot_conf.app_name, &global_options.docker_image
+            "cargo-acap: using Docker image {}",
+            &global_options.docker_image
         );
 
         if self.show_version || global_options.verbose > 0 {
@@ -47,6 +46,8 @@ impl Build {
         }
 
         for target in targets {
+            let package_dot_conf =
+                PackageDotConf::from_cargo_package(&invocation.cargo_package, target);
             BuildOp {
                 invocation: &invocation,
                 package_conf: &package_dot_conf,
