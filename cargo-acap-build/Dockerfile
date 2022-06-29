@@ -90,4 +90,13 @@ ENV \
   CXX_mipsel_axis_linux_gnu="mipsisa32r2el-axis-linux-gnu-g++" \
   CARGO_TARGET_MIPSEL_AXIS_LINUX_GNU_LINKER="mipsisa32r2el-axis-linux-gnu-gcc" \
   PATH="/usr/local/sbin:/usr/local/bin:/usr/local/mipsisa32r2el/r23/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-  PKG_CONFIG_ALLOW_CROSS=1
+  PKG_CONFIG_ALLOW_CROSS=1 \
+# This hack should become obsolete when this lands: https://github.com/rust-lang/rust/issues/44839
+# Needed to build crossbeam-utils which is a common async dependency with 70 million downloads.
+# https://crates.io/crates/crossbeam-utils/reverse_dependencies
+# As of Rust 1.61, it's currently not possible to do #[cfg(target-feature = "atmoic64")] or similar.
+# Therefore crossbeam-utils keeps a blacklist of targets that don't support 64bit atomic operations.
+# Since we use custom targets, we're not in the blacklist, and we would fail to compile.
+# This problem should go away when the rust RFC lands and when the ecosystem has adopted its use.
+  CARGO_TARGET_ARMV5TE_AXIS_LINUX_GNUEABI_RUSTFLAGS="--cfg crossbeam_no_atomic_64" \
+  CARGO_TARGET_MIPSEL_AXIS_LINUX_GNU_RUSTFLAGS="--cfg crossbeam_no_atomic_64"
