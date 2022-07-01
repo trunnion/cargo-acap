@@ -204,6 +204,20 @@ impl Invocation {
             &format!("{}:/.cargo:Z", self.cargo_home.display()),
         ]);
 
+        // Pass through some env vars to docker container that cargo might need to fetch dependencies
+        let pass_through_env = [
+            "http_proxy",
+            "https_proxy",
+            "ftp_proxy",
+            "all_proxy",
+            "no_proxy",
+        ];
+        for var in pass_through_env {
+            if let Ok(val) = std::env::var(var) {
+                docker.args(&["--env", &format!("{}={}", var, val)]);
+            }
+        }
+
         if let Ok(value) = std::env::var("DOCKER_OPTS") {
             let opts: Vec<&str> = value.split(' ').collect();
             docker.args(&opts);
