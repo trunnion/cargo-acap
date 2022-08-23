@@ -39,4 +39,8 @@ pub struct CargoAcapMetadata {
 
     /// The targets to be built by a bare `cargo acap build` invocation.
     pub targets: Option<Vec<Target>>,
+
+    /// Specifies the minimum required SDK version that the product running the
+    /// application must support.
+    pub required_embedded_development_version: Option<String>,
 }

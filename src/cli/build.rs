@@ -3,6 +3,7 @@ use crate::package_dot_conf::PackageDotConf;
 use crate::target::Target;
 use clap::Parser;
 use std::io::Write;
+use std::fs::File;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
@@ -200,6 +201,41 @@ impl<'a> BuildOp<'a> {
             )?;
         }
 
+        // write "otherfiles"
+        {
+            // TODO: the "otherfiles" folder is only intended for static files.
+            // Since it might be of interest to also copy built files such as
+            // .so files, we should also provide another folder to copy from
+            // for those files.
+            match tar.append_dir_all(".", "otherfiles") {
+                Ok(_) => (),
+                Err(e) => {
+                    if e.kind() == std::io::ErrorKind::NotFound {
+                        // ignore
+                    } else {
+                        return Err(e);
+                    }
+                }
+            }
+        }
+
+        // write postinstall.sh
+        {
+            match File::open("postinstall.sh") {
+                Ok(mut f) => {
+                    tar.append_file("postinstall.sh", &mut f)?;
+                },
+                Err(e) => {
+                    if e.kind() == std::io::ErrorKind::NotFound {
+                        // ignore
+                    } else {
+                        return Err(e);
+                    }
+                }
+            }
+        }
+
+        // write executable
         {
             let mut executable = std::fs::File::open(stripped_executable_path)?;
             tar.append_file(&self.package_conf.app_name, &mut executable)?;

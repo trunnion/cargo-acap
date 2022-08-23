@@ -84,8 +84,8 @@ pub(crate) struct PackageDotConf {
     /// A script that will be executed on the Axis product when the installation is completed. The
     /// script must be a shell script located in the same directory as the package.conf file. The
     /// script will be executed from the application directory in the Axis product.
-    #[serde(rename = "POSTINSTALLSCRIPT", skip_serializing_if = "Option::is_none")]
-    pub post_install_script: Option<String>,
+    #[serde(rename = "POSTINSTALLSCRIPT")]
+    pub post_install_script: String,
 
     /// Specifies the minimum required SDK version that the product running the application must
     /// support. Firmware version 5.60 correspond to REQEMBDEVVERSION="2.0"
@@ -150,11 +150,13 @@ impl PackageDotConf {
             license_check_arguments,
             start_mode,
             targets: _,
+            required_embedded_development_version,
         } = acap_metadata;
 
         let app_name = app_name.unwrap_or_else(|| package.name().to_string());
         let display_name = display_name.unwrap_or_else(|| package.name().to_string());
         let menu_name = menu_name.unwrap_or_else(|| display_name.clone());
+        let required_embedded_development_version = required_embedded_development_version.unwrap_or_else(|| "2.0".to_string());
 
         let vendor = vendor.unwrap_or_else(|| format!("{} authors", &display_name));
 
@@ -213,8 +215,8 @@ impl PackageDotConf {
             settings_page_text: None,
             vendor_homepage_link,
             http_cgi_paths: None,
-            post_install_script: None,
-            required_embedded_development_version: "2.0".to_string(),
+            post_install_script: "postinstall.sh".to_string(),
+            required_embedded_development_version,
             unix_user: "sdk".to_string(),
             unix_group: "sdk".to_string(),
             start_mode,
