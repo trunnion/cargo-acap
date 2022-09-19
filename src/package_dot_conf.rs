@@ -154,6 +154,13 @@ impl PackageDotConf {
         } = acap_metadata;
 
         let app_name = app_name.unwrap_or_else(|| package.name().to_string());
+        // ACAP framework only support names that contain alphanumeric ASCII and _
+        for c in app_name.chars() {
+            if !c.is_ascii_alphanumeric() && c != '_' {
+                panic!("Character '{}' is not allowed in acap APPNAME: {}", c, app_name);
+            }
+        }
+
         let display_name = display_name.unwrap_or_else(|| package.name().to_string());
         let menu_name = menu_name.unwrap_or_else(|| display_name.clone());
         let required_embedded_development_version = required_embedded_development_version.unwrap_or_else(|| "2.0".to_string());
