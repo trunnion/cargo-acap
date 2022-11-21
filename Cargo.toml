@@ -1,6 +1,6 @@
 [package]
 name = "cargo-acap"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Will Glynn <will@willglynn.com>"]
 edition = "2018"
 description = "A tool to build Rust programs for the AXIS Camera Application Platform."
