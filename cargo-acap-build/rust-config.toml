@@ -2,6 +2,7 @@
 optimize = true
 ninja = true
 targets = "AArch64;ARM;Mips;X86"
+download-ci-llvm = false
 
 [build]
 build = "x86_64-unknown-linux-gnu"
