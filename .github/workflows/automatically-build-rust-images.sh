@@ -10,7 +10,8 @@ DOCKER_TAGS=$(
   )
 
 curl -s https://api.github.com/repos/rust-lang/rust/releases | \
-  jq -r 'limit(2; sort_by(.created_at) | reverse | .[] | select(.prerelease==false) | select(.created_at >= "2020-07-16") | .tag_name)' | \
+  jq -r 'limit(2; sort_by(.created_at) | reverse | .[] | select(.prerelease==false) | select(.created_at >= "2022-01-01") | .tag_name)' | \
+  uniq | \
   while read -r RUST_TAG
   do
     if [[ "$DOCKER_TAGS" == *"$RUST_TAG"* ]]
