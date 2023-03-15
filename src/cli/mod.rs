@@ -28,7 +28,7 @@ pub struct GlobalOptions {
     manifest_path: PathBuf,
 
     /// `docker` image to use for cross-compiling
-    #[clap(long, default_value = "trunnion/cargo-acap")]
+    #[clap(long, default_value = "ghcr.io/trunnion/cargo-acap")]
     docker_image: String,
 }
 

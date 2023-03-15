@@ -15,7 +15,7 @@ C/C++ cross-compilers supporting `--target=`:
 ## Tags
 
 This image is built from tagged releases of the Rust compiler in the `rust-lang/rust` GitHub repository. The resulting
-Docker images are tagged to match, like `trunnion/cargo-acap-build:1.47.0`.
+Docker images are tagged to match, like `ghcr.io/trunnion/cargo-acap:1.68.0`.
 
 ## Details
 
@@ -31,7 +31,7 @@ guidance.
 `.github/workflows/` contains two associated GitHub Actions definitions:
 
 * `build-rust-image.yml`: when invoked a `rustVersion` argument, it builds and pushes a `cargo-acap-build:<rustVersion>`
-  Docker image. 
+  Docker image.
 * `automatically-build-rust-images.yml`: when invoked manually or by the scheduler, it compares the list of Docker
   images to the list of Rust releases and triggers `build-rust-image.yml` builds as needed.
 
