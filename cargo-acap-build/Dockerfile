@@ -3,7 +3,7 @@
 FROM slawlor/axis_acap@sha256:c8390b3ef1028f2a8b3bfd690b4c9ddd495473362135095b832ab3deb1851022 AS axis-sdk2
 
 # Start a Rust builder stage
-FROM ubuntu:20.04 AS rust
+FROM ubuntu:22.04 AS rust
 
 # Start to build Rust, per:
 #   https://rustc-dev-guide.rust-lang.org/building/how-to-build-and-run.html
@@ -50,7 +50,7 @@ RUN ./x.py install && \
   rm -r /rust
 
 # Prepare the final stage
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Install some host tools and all the relevant target toolchains
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
