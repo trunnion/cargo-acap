@@ -1,6 +1,6 @@
 # We're going to want the AXIS SDKv2 for the MIPS toolchain
 # Pull in an image that contains it
-FROM slawlor/axis_acap@sha256:c8390b3ef1028f2a8b3bfd690b4c9ddd495473362135095b832ab3deb1851022 AS axis-sdk2
+FROM trunnion/cargo-acap:1.45.0 AS axis-sdk2
 
 # Start a Rust builder stage
 FROM ubuntu:22.04 AS rust
